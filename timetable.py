@@ -4,9 +4,9 @@ import time
 
 def getCourseTimetable(course_list):
     time_select = 0
-    if course_list[0] == "summer":
+    if course_list[0].lower() == "summer":
         time_select = 5
-    elif course_list[0] == "fall" or course_list[0] == "winter":
+    elif course_list[0].lower() == "fall" or course_list[0].lower() == "winter":
         time_select = 9
     response = ""
     for course in course_list:
