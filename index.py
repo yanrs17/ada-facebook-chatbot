@@ -11,14 +11,6 @@ import datetime
 import requests
 import json 
 
-"""
-helper function for search_book to match a course name
-"""
-def course_match(courses, name):
-    for course in courses:
-        if name in course["code"]:
-            return True 
-    return False 
 
 # Libraries
 LIST_OF_LIBRARIES = [
@@ -130,23 +122,6 @@ def output(query):
     
     else:
         return 'Not implemented yet'
-
-@app.route('/books/<book>')
-def search_book(book):
-    url = "https://cobalt.qas.im/api/1.0/textbooks?key=LrCC7Jj8knSAMPWPsDhf8l9h90QCMOsx"
-    response = requests.get(url).text
-    books = json.loads(response)
-    # print(b)
-    # print(type(b))
-    for item in books:
-        # print(item["courses"])
-        if item["title"] == book or course_match(item["courses"], book):
-            text = ""
-            for key in item:
-                if key != "courses":
-                    text += key+": "+str(item[key])+"<br/>" 
-            return text
-    return "cannot find book"
 
 
 if __name__ == '__main__':
