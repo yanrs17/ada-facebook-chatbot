@@ -112,6 +112,23 @@ def output(query):
         # TODO WEBSCRAPER
         return "The Open Time for {} is {} today.".format(DICT_OF_LIBRARIES[second], "10 am to 5 pm")
 
+@app.route('/books/<book_name>')
+def search_book(book_name):
+    url = "https://cobalt.qas.im/api/1.0/textbooks?key=LrCC7Jj8knSAMPWPsDhf8l9h90QCMOsx"
+    response = requests.get(url).text
+    books = json.loads(response)
+    # print(b)
+    print(type(b))
+    for item in books:
+       if item["title"] == book_name:
+        text = ""
+        for key in item:
+            if key != "courses":
+                text += key+": "+str(item[key])+"<br/>" 
+        return text
+    return "cannot find book"
+
+
 if __name__ == '__main__':
     app.debug = True
     app.run()
