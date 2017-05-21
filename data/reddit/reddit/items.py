@@ -11,4 +11,9 @@ import scrapy
 class RedditItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    subreddit = Field()
+	link = Field()
+	title = Field()
+	date = Field()
+	vote = Field()
+	top_comment = Field()
