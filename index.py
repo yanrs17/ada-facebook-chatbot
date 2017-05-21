@@ -95,10 +95,9 @@ def output(query):
 
     if (len(tokens) == 1): # If there is only one token
         if first == 'lib' or first == 'library':
-            #return "你要找哪些图书馆呢？<br/>" + getSuggestedLibraries()
             return "Please enter the library you are looking for.(ie. lib rb)<br/>" + getSuggestedLibraries()
         elif first == 'timetable':
-            return "你要找什么课？<br/>"
+            return "What course do you want to find?<br/>"
         else:
             return 'Not implemented yet'
 
