@@ -110,16 +110,6 @@ def output(query):
     
     if len(tokens) >= 2 and (first.upper() == 'LIB' or first.upper() == "LIBRARY"):
         return getOpentime(tokens[1])
-    
-    second = tokens[1]
-    if second == "ba":
-        return "24/7/365, 程序员不用休息哒（¯﹃¯）";
-    if second not in DICT_OF_LIBRARIES: #输入的内容无法在dict中找到，直接查找不转换
-        return "抱歉哦,小助手找不到你输入的图书馆,你是不是要找以下的图书馆呢?>_<<br/>" + getSuggestedLibraries() + "请输入图书馆简称哦 (e.g.: library kf) _(:3 」∠)_ "
-#             return;
-    else: #输入的内容可以在DICT找得到，先转换成全称
-        # TODO WEBSCRAPER
-        return "The Open Time for {} is {} today.".format(DICT_OF_LIBRARIES[second], "10 am to 5 pm")
 
 @app.route('/books/<book_name>')
 def search_book(book_name):
