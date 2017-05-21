@@ -4,6 +4,10 @@ app = Flask(__name__)
 from where import getLocation
 from timetable import getCourseTimetable
 
+import datetime
+import requests
+import json 
+
 # Libraries
 LIST_OF_LIBRARIES = [
     "kf - Academic Success Centre, Koffler Centre",
@@ -118,7 +122,7 @@ def search_book(book_name):
     response = requests.get(url).text
     books = json.loads(response)
     # print(b)
-    print(type(b))
+    # print(type(b))
     for item in books:
        if item["title"] == book_name:
         text = ""
