@@ -12,7 +12,8 @@ def getLocation(second):
     address = addresses.find_one({"code": loc})
     if address:
         long_url = 'http://maps.google.com?q=' + str(address['lat']) + ',' + str(address['lng'])
+
         client.close()
-        return "Location of " + second + ": " + long_url
+        return "Location of " + second + ": " + "<a href =\"{}\">{}</a>".format(long_url, long_url)
     else:
         return "Building not found"
