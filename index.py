@@ -4,6 +4,7 @@ app = Flask(__name__)
 from where import getLocation
 from opentime import getOpentime
 from timetable import getCourseTimetable
+from search_book import search_book
 from library_data import *
 
 import datetime
@@ -104,12 +105,14 @@ def output(query):
     # rest = tokens[1:]
 
     if (len(tokens) == 1): # If there is only one token
-        if (first.upper() == 'LIB' or first.upper() == "LIBRARY"):
+        if (first.upper() == 'LIB' or first.upper() == 'LIBRARY'):
             return "Please enter the library you are looking for.(ie. lib rb)<br/>" + getSuggestedLibraries()
         elif first.upper() == 'TIMETABLE':
             return "What course do you want to find?<br/>"
         elif (first.upper() == 'WHERE' or first.upper() == "LOC" or first.upper() == "LOCATION" or first == "找"):
             return "Which building do you want to find?<br/>"
+        elif (first.upper() == 'BOOK' or first.upper() == 'BOOKS'):
+            return "Please enter the book you are looking for.<br/>"
         else:
             return 'Not implemented yet'
 
@@ -121,6 +124,12 @@ def output(query):
 
     if len(tokens) >= 2 and (first.upper() == 'LIB' or first.upper() == "LIBRARY"):
         return getOpentime(tokens[1])
+    
+    if len(tokens) >= 2 and (first.upper() == 'BOOK' or first.upper() == 'BOOKS'):
+        return search_book(tokens[1:])
+    
+    else:
+        return 'Not implemented yet'
 
 @app.route('/books/<book>')
 def search_book(book):
