@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
 app = Flask(__name__)
+from where import getLocation
+from timetable import getCourseTimetable
 
 # Libraries
 LIST_OF_LIBRARIES = [
@@ -89,8 +91,17 @@ def output(query):
     if (len(tokens) == 1): # If there is only one token
         if first == 'lib' or first == 'library':
             return "你要找哪些图书馆呢？<br/>" + getSuggestedLibraries()
+        elif first == 'timetable':
+            return "你要找什么课？<br/>"
         else:
             return 'Not implemented yet'
+
+    if len(tokens) >= 2 and (first.upper() == 'WHERE' or first.upper() == "LOC" or first.upper() == "LOCATION" or first == "找"):
+        return getLocation(tokens[1])
+    
+    if len(tokens) >= 2 and (first.upper() == 'TIMETABLE'):
+        return getCourseTimetable(tokens[1:])
+    
     second = tokens[1]
     if second == "ba":
         return "24/7/365, 程序员不用休息哒（¯﹃¯）";
