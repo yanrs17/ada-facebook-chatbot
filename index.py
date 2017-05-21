@@ -2,6 +2,7 @@
 from flask import Flask
 app = Flask(__name__)
 from where import getLocation
+from timetable import getCourseTimetable
 
 # Libraries
 LIST_OF_LIBRARIES = [
@@ -97,6 +98,9 @@ def output(query):
 
     if len(tokens) >= 2 and (first.upper() == 'WHERE' or first.upper() == "LOC" or first.upper() == "LOCATION" or first == "找"):
         return getLocation(tokens[1])
+    
+    if len(tokens) >= 2 and (first.upper() == 'TIMETABLE'):
+        getCourseTimetable(token[1:])
     
     second = tokens[1]
     if second == "ba":
