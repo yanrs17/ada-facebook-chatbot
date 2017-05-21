@@ -2,7 +2,9 @@
 from flask import Flask
 app = Flask(__name__)
 from where import getLocation
+from opentime import getOpentime
 from timetable import getCourseTimetable
+from library_data import *
 
 import datetime
 import requests
@@ -102,28 +104,23 @@ def output(query):
     # rest = tokens[1:]
 
     if (len(tokens) == 1): # If there is only one token
-        if first == 'lib' or first == 'library':
-            return "你要找哪些图书馆呢？<br/>" + getSuggestedLibraries()
-        elif first == 'timetable':
-            return "你要找什么课？<br/>"
+        if (first.upper() == 'LIB' or first.upper() == "LIBRARY"):
+            return "Please enter the library you are looking for.(ie. lib rb)<br/>" + getSuggestedLibraries()
+        elif first.upper() == 'TIMETABLE':
+            return "What course do you want to find?<br/>"
+        elif (first.upper() == 'WHERE' or first.upper() == "LOC" or first.upper() == "LOCATION" or first == "找"):
+            return "Which building do you want to find?<br/>"
         else:
             return 'Not implemented yet'
 
     if len(tokens) >= 2 and (first.upper() == 'WHERE' or first.upper() == "LOC" or first.upper() == "LOCATION" or first == "找"):
         return getLocation(tokens[1])
-    
+
     if len(tokens) >= 2 and (first.upper() == 'TIMETABLE'):
         return getCourseTimetable(tokens[1:])
-    
-    second = tokens[1]
-    if second == "ba":
-        return "24/7/365, 程序员不用休息哒（¯﹃¯）";
-    if second not in DICT_OF_LIBRARIES: #输入的内容无法在dict中找到，直接查找不转换
-        return "抱歉哦,小助手找不到你输入的图书馆,你是不是要找以下的图书馆呢?>_<<br/>" + getSuggestedLibraries() + "请输入图书馆简称哦 (e.g.: library kf) _(:3 」∠)_ "
-#             return;
-    else: #输入的内容可以在DICT找得到，先转换成全称
-        # TODO WEBSCRAPER
-        return "The Open Time for {} is {} today.".format(DICT_OF_LIBRARIES[second], "10 am to 5 pm")
+
+    if len(tokens) >= 2 and (first.upper() == 'LIB' or first.upper() == "LIBRARY"):
+        return getOpentime(tokens[1])
 
 @app.route('/books/<book>')
 def search_book(book):
@@ -133,7 +130,7 @@ def search_book(book):
     # print(b)
     # print(type(b))
     for item in books:
-        print(item["courses"])
+        # print(item["courses"])
         if item["title"] == book or course_match(item["courses"], book):
             text = ""
             for key in item:

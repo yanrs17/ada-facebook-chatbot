@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import urllib
+from library_data import *
 
 def getOpentime(second):
 	if second == "ba":
