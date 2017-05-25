@@ -17,8 +17,8 @@ class DuplicatesPipeline(object):
 	def __init__(self):
 		self.ids_seen = set()
 
-    def process_item(self, item, spider):
-        if item['link'] in self.ids_seen:
+	def process_item(self, item, spider):
+		if item['link'] in self.ids_seen:
 			raise DropItem("Duplicate item found: %s" % item)
 		else:
 			self.ids_seen.add(item['link'])

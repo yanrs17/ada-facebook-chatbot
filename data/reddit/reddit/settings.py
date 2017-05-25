@@ -66,7 +66,7 @@ DOWNLOAD_DELAY = 2
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'reddit.pipelines.RedditPipeline': 300,
+    'reddit.pipelines.DuplicatesPipeline': 300,
 	'reddit.pipelines.MongoDBPipeline':800,
 }
 

@@ -5,14 +5,15 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
-
-class RedditItem(scrapy.Item):
+from scrapy import Item, Field
+class RedditItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    subreddit = Field()
-	link = Field()
-	title = Field()
-	date = Field()
-	vote = Field()
-	top_comment = Field()
+    # subreddit = Field()
+    # link = Field()
+    # title = Field()
+    # date = Field()
+    # vote = Field()
+    # top_comment = Field()
+    question = Field()
+    answer = Field()
