@@ -17,3 +17,4 @@ class RedditItem(Item):
     # top_comment = Field()
     question = Field()
     answer = Field()
+    link = Field()

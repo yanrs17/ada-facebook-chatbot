@@ -15,16 +15,6 @@ from reddit.items import RedditItem
 class RedditSpider(Spider):
 	name = 'reddit'
 	allowed_domains = ['reddit.com']
-	"""start_urls = ['https://www.reddit.com/r/circlejerk', 
-	'https://www.reddit.com/r/gaming', 
-	'https://www.reddit.com/r/floridaman',  
-	'https://www.reddit.com/r/movies', 
-	'https://www.reddit.com/r/science', 
-	'https://www.reddit.com/r/seahawks', 
-	'https://www.reddit.com/r/totallynotrobots', 
-	'https://www.reddit.com/r/uwotm8', 
-	'https://www.reddit.com/r/videos', 
-	'https://www.reddit.com/r/worldnews']"""
 	start_urls = ['https://www.reddit.com/r/UofT']
 
 	# tell the Spider what to do on each of the start_urls
@@ -63,27 +53,28 @@ class RedditSpider(Spider):
 		# yield item
 
 	def parse(self, response):
-		titles = response.css('a.title.may-blank::attr(href)').extract()
-		for i, link in enumerate(titles):
-			# if not re.find('\\?', title.css('::text').extract()):
-			# 	continue
+		links = response.css('a.title.may-blank::attr(href)').extract()
+		titles = response.css('a.title.may-blank::text').extract()
+		for i, link in enumerate(links):
+			if not re.search('\?', titles[i]):
+			 	continue
 			yield response.follow(link, callback=self.parse_comment_page)
 
 	def parse_comment_page(self, response):
 		content_post = response.css('div.expando div.md')
 
 		# if the length of content post is greater than 60, the question is too specific
-		# if len(content_post.extract().split()) > 60:
-		# 	return
-
+		if len(str(content_post.extract()).split()) > 60:
+			return
 		item = RedditItem()
-		item['question'] = response.css('p.title a.title.may-blank::text').extract()[0]
+		item['question'] = str(response.css('p.title a.title.may-blank::text').extract()[0])
 		top = response.css('div.commentarea div.md')[0]
 		top_content = top.css('p::text').extract()[0]
-		print "question: %s" % str(item['question'])
-		print "answer: %s"  % str(top_content)
-		print ""
-
+		item['answer'] = str(top_content)
+		item['link'] = str(response.url)
+		#print "question: %s" % str(item['question'])
+		#print "answer: %s"  % str(top_content)
+		#print "link: %s" % response.url
 
 
 
