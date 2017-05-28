@@ -1,0 +1,1 @@
+ssh -v -i fbChatBot.pem ubuntu@ec2-35-163-200-191.us-west-2.compute.amazonaws.com
