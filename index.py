@@ -68,7 +68,9 @@ def receivedMessage(event):
     #     sendTextMessage(senderID, "Message with attachment received")
 
     if (messageText):
+        print "go into messageText"
         responseText = respondToQuery(messageText)
+        print "get responseText"
         sendTextMessage(senderID, responseText)
     elif (messageAttachments):
         sendTextMessage(senderID, "Message with attachment received")
@@ -139,6 +141,8 @@ def callSendAPI(messageData):
 
 if __name__ == '__main__':
     # initialize chatbot (only once per server session)
+    print "initialize chatbot "
     ChatbotManager()
+    print "after bot initialization"
     app.debug = True
     app.run()
