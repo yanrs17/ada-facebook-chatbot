@@ -1,10 +1,10 @@
-from .scraper import Scraper
+from ..utils import Scraper
 from bs4 import BeautifulSoup
 from collections import OrderedDict
-from Queue import Queue
+from queue import Queue
 from threading import Thread, Lock
 from time import time, sleep
-import cookielib
+import http.cookiejar
 import requests
 import random
 import json
@@ -18,12 +18,15 @@ class Reddit:
 
     Course Finder is located at http://coursefinder.utoronto.ca/.
     """
+
     host = 'https://www.reddit.com'
-    first_page_url = 'https://www.reddit.com/r/UofT/'
+    #first_page_url = 'https://www.reddit.com/r/UofT/search?rank=title&q=timestamp%3A1455056765..1473005565&restrict_sr=on&syntax=cloudsearch'
     headers = {
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'
+        'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) '
+            + 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
     }
-    cookies = cookielib.CookieJar()
+    start_urls = get_urls()
+    cookies = http.cookiejar.CookieJar()
     threads = 32
 
     page_count = 1
@@ -35,11 +38,23 @@ class Reddit:
         headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'}
         r = requests.get(url, headers=headers)
-        text = r.text
-        #text = r.text.encode('utf-8').decode('ascii', 'ignore')
+        text = r.text.encode('utf-8').decode('ascii', 'ignore')
         t = random.randint(1, 50)
         sleep(t/50)
         return text
+
+    @staticmethod
+    def get_urls():
+        nxt_time = 1230768000
+        urls = []
+
+        while nxt_time < time.time():
+            now_time = nxt_time
+            # three months: 7776000
+            nxt_time = nxt_time + 7776000
+            url = 'https://www.reddit.com/r/UofT/search?rank=title&q=timestamp:' + str(now_time) + '..' + str(nxt_time) + '&restrict_sr=on&syntax=cloudsearch'
+            urls.append(url)
+        return urls
 
     @staticmethod
     def scrape(location='.'):
@@ -57,62 +72,70 @@ class Reddit:
             worker.daemon = True
             worker.start()
 
-        next_page_url = Reddit.first_page_url
-        while True:
-            html = Reddit.get_html(next_page_url)
-            idAndUrls = Reddit.search(html)
-            next_page_url = Reddit.next_page(html)
-            for idAndUrl in idAndUrls:
-                queue.put(idAndUrl)
-                url_count += 1
-                Scraper.logger.info('Adding %dth url.' % url_count)
-            if not next_page_url:
-                break
+        for url in Reddit.start_urls:
+            next_page_url = url
+            # page_count = 1
+            while True:
+                html = Reddit.get_html(next_page_url)
+                idAndUrls = Reddit.search(html)
+                next_page_url = Reddit.next_page(html)
+                for idAndUrl in idAndUrls:
+                    queue.put(idAndUrl)
+                    url_count += 1
+                    Scraper.logger.info('Adding %dth url.' % url_count)
+                if not next_page_url:
+                    break
+                # else:
+                #     print(page_count)
+                #     page_count += 1
+                #     print(next_page_url)
 
         queue.join()
-
         Scraper.logger.info('Took %.2fs to retreive reddit info.' % (
             time() - ts
         ))
 
         Scraper.save_json(QandAFinderWorker.all_QandAs, location, 'QandAs')
+        print("finished")
 
         Scraper.logger.info('Reddit completed.')
 
     @staticmethod
     def search(html):
-        html = BeautifulSoup(html, 'html.parser')
+        # headers = {
+        #     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'}
+        # r = requests.get(url, headers=headers)
+        # text = r.text.encode('utf-8').decode('ascii', 'ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+
         links = []
-        ids = []
-        html_lst = html.select('div.entry.unvoted a.title.may-blank')
-        id_lst = html.select('div.linkflair')
-        has_id_index = []
-        id_link_tuples_lst = []
-        for j in range(len(html_lst)):
-            title = html_lst[j].get_text()
+        if soup.select('div.search-result.search-result-link') == []:
+            return links
+        div = soup.select('div.search-result.search-result-link')
+        for item in div:
+            title = item.div.header.a.get_text()
             if not re.search('\?', title):
                 continue
-            has_id_index.append(j)
-            if html_lst[j]['href'].find('/r/UofT') == -1:
-                print('useless link %s', html_lst[j]['href'])
-                continue
-            links.append(html_lst[j]['href'])
-        # print html_lst
-        # print "Links on current page : "
-        # print id_link_tuples_lst
+            fullname = item['data-fullname']
+            link = item.div.header.a.get('href')
+            # info = (fullname, link)
+            links.append(link)
         return links
 
     @staticmethod
     def next_page(html):
-        html = BeautifulSoup(html, 'html.parser')
-        if len(html.select('span.next-button a')) > 0:
-            nxt_link = html.select('span.next-button a')[0]['href']
-        # print "Next link: "
-        # print nxt_link
-            #print(Reddit.page_count)
-            #print(nxt_link)
-            Reddit.page_count += 1
-            return nxt_link
+        # headers = {
+        #     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'}
+        # r = requests.get(url, headers=headers)
+        # text = r.text.encode('utf-8').decode('ascii', 'ignore')
+        soup = BeautifulSoup(html, 'html.parser')
+
+        if len(soup.select('span.nextprev a')) > 0:
+            nxt_link = soup.select('span.nextprev a')[-1]
+            if nxt_link['rel'][1] == 'next':
+                return nxt_link['href']
+            else:
+                return None
         else:
             return None
 
@@ -135,7 +158,8 @@ class Reddit:
         if top.select('p') == []:
             return
         answer = top.select('p')[0].get_text()
-
+        if len(answer.split()) > 30:
+            return
         QandA = {'question': question, 'answer': answer}
         return QandA
 

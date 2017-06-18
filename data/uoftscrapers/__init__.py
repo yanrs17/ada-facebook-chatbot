@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 
-from .scrapers import Reddit
+from .scrapers.reddit import Reddit
 
 class NullHandler(logging.Handler):
 
