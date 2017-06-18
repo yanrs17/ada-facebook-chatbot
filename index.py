@@ -128,7 +128,7 @@ def respondToQuery(messageText):
 
 def sendTextMessage(recipientId, messageText):
     print "Send to user" + str(recipientId)
-    response_msg = json.dumps({"recipient":{"id":recipientId}, "message":{"text":messageText}})
+    response_msg = json.dumps({"recipient":{"id":recipientId}, "message":{"text":"hahah"}})
     callSendAPI(response_msg)
 
 def callSendAPI(messageData):
