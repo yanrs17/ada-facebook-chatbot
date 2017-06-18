@@ -135,6 +135,11 @@ def receivedMessage(event):
     elif (messageAttachments):
         sendTextMessage(senderID, "Message with attachment received")
 
+def sendGenericMessage(senderId):
+    print "Send to user" + str(recipientId)
+    response_msg = json.dumps({"recipient":{"id":recipientId}, "message":{"text":"lol"}})
+    callSendAPI(response_msg)
+
 def sendTextMessage(recipientId, messageText):
     print "Send to user" + str(recipientId)
     response_msg = json.dumps({"recipient":{"id":recipientId}, "message":{"text":messageText}})
