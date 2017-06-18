@@ -129,7 +129,7 @@ def receivedMessage(event):
 
     if (messageText):
         if messageText == 'generic':
-            sendTextMessage(senderID, messageText)
+            sendTextMessage(senderID, "lol")
             # sendGenericMessage(senderID)
         else:
             sendTextMessage(senderID, messageText)
