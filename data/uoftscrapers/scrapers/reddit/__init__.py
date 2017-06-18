@@ -14,154 +14,154 @@ import sys
 
 
 class Reddit:
-    """A scraper for UofT's Course Finder web service.
+	"""A scraper for UofT's Course Finder web service.
 
-    Course Finder is located at http://coursefinder.utoronto.ca/.
-    """
+	Course Finder is located at http://coursefinder.utoronto.ca/.
+	"""
 
-    host = 'https://www.reddit.com'
-    #first_page_url = 'https://www.reddit.com/r/UofT/search?rank=title&q=timestamp%3A1455056765..1473005565&restrict_sr=on&syntax=cloudsearch'
-    headers = {
-        'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) '
-            + 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-    }
-    start_urls = get_urls()
-    cookies = http.cookiejar.CookieJar()
-    threads = 32
+	host = 'https://www.reddit.com'
+	#first_page_url = 'https://www.reddit.com/r/UofT/search?rank=title&q=timestamp%3A1455056765..1473005565&restrict_sr=on&syntax=cloudsearch'
+	headers = {
+		'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) '
+		+ 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+	}
 
-    page_count = 1
+	def get_urls():
+		nxt_time = 1119639970 # 2005/06/23
+		urls = []
 
-    @staticmethod
-    def get_html(url):
-        if url.find('www.reddit') == -1:
-            url = 'https://www.reddit.com' + url
-        headers = {
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'}
-        r = requests.get(url, headers=headers)
-        text = r.text.encode('utf-8').decode('ascii', 'ignore')
-        t = random.randint(1, 50)
-        sleep(t/50)
-        return text
-
-    @staticmethod
-    def get_urls():
-        nxt_time = 1230768000
-        urls = []
-
-        while nxt_time < time.time():
-            now_time = nxt_time
+		while nxt_time < time():
+			now_time = nxt_time
             # three months: 7776000
-            nxt_time = nxt_time + 7776000
-            url = 'https://www.reddit.com/r/UofT/search?rank=title&q=timestamp:' + str(now_time) + '..' + str(nxt_time) + '&restrict_sr=on&syntax=cloudsearch'
-            urls.append(url)
-        return urls
+			nxt_time = nxt_time + 7776000
+			url = 'https://www.reddit.com/r/UofT/search?rank=title&q=timestamp:' + str(now_time) + '..' + str(nxt_time) + '&restrict_sr=on&syntax=cloudsearch'
+			urls.append(url)
+		return urls
 
-    @staticmethod
-    def scrape(location='.'):
-        """Update the local JSON files for this scraper."""
+	start_urls = get_urls()
+	cookies = http.cookiejar.CookieJar()
+	threads = 100
 
-        Scraper.logger.info('Reddit initialized.')
+	page_count = 1
 
-        url_count = 1
+	@staticmethod
+	def get_html(url):
+		if url.find('www.reddit') == -1:
+			url = 'https://www.reddit.com' + url
+		headers = {
+			'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'}
+		r = requests.get(url, headers=headers)
+		text = r.text.encode('utf-8').decode('ascii', 'ignore')
+		t = random.randint(1, 50)
+		sleep(t/50)
+		return text
 
-        ts = time()
-        queue = Queue()
+	@staticmethod
+	def scrape(location='.'):
+		"""Update the local JSON files for this scraper."""
 
-        for x in range(Reddit.threads):
-            worker = QandAFinderWorker(queue)
-            worker.daemon = True
-            worker.start()
+		Scraper.logger.info('Reddit initialized.')
 
-        for url in Reddit.start_urls:
-            next_page_url = url
-            # page_count = 1
-            while True:
-                html = Reddit.get_html(next_page_url)
-                idAndUrls = Reddit.search(html)
-                next_page_url = Reddit.next_page(html)
-                for idAndUrl in idAndUrls:
-                    queue.put(idAndUrl)
-                    url_count += 1
-                    Scraper.logger.info('Adding %dth url.' % url_count)
-                if not next_page_url:
-                    break
+		url_count = 1
+
+		ts = time()
+		queue = Queue()
+
+		for x in range(Reddit.threads):
+			worker = QandAFinderWorker(queue)
+			worker.daemon = True
+			worker.start()
+
+		for url in Reddit.start_urls:
+			next_page_url = url
+			# page_count = 1
+			while True:
+				html = Reddit.get_html(next_page_url)
+				idAndUrls = Reddit.search(html)
+				next_page_url = Reddit.next_page(html)
+				for idAndUrl in idAndUrls:
+					queue.put(idAndUrl)
+					url_count += 1
+					Scraper.logger.info('Adding %dth url.' % url_count)
+				if not next_page_url:
+					break
                 # else:
                 #     print(page_count)
                 #     page_count += 1
                 #     print(next_page_url)
 
-        queue.join()
-        Scraper.logger.info('Took %.2fs to retreive reddit info.' % (
-            time() - ts
-        ))
+		queue.join()
+		Scraper.logger.info('Took %.2fs to retreive reddit info.' % (
+			time() - ts
+		))
 
-        Scraper.save_json(QandAFinderWorker.all_QandAs, location, 'QandAs')
-        print("finished")
+		Scraper.save_json(QandAFinderWorker.all_QandAs, location, 'QandAs')
+		print("finished")
 
-        Scraper.logger.info('Reddit completed.')
+		Scraper.logger.info('Reddit completed.')
 
-    @staticmethod
-    def search(html):
+	@staticmethod
+	def search(html):
         # headers = {
         #     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'}
         # r = requests.get(url, headers=headers)
         # text = r.text.encode('utf-8').decode('ascii', 'ignore')
-        soup = BeautifulSoup(html, 'html.parser')
+		soup = BeautifulSoup(html, 'html.parser')
 
-        links = []
-        if soup.select('div.search-result.search-result-link') == []:
-            return links
-        div = soup.select('div.search-result.search-result-link')
-        for item in div:
-            title = item.div.header.a.get_text()
-            if not re.search('\?', title):
-                continue
-            fullname = item['data-fullname']
-            link = item.div.header.a.get('href')
+		links = []
+		if soup.select('div.search-result.search-result-link') == []:
+			return links
+		div = soup.select('div.search-result.search-result-link')
+		for item in div:
+			title = item.div.header.a.get_text()
+            # if not re.search('\?', title):
+            #     continue
+			fullname = item['data-fullname']
+			link = item.div.header.a.get('href')
             # info = (fullname, link)
-            links.append(link)
-        return links
+			links.append(link)
+		return links
 
-    @staticmethod
-    def next_page(html):
+	@staticmethod
+	def next_page(html):
         # headers = {
         #     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36'}
         # r = requests.get(url, headers=headers)
         # text = r.text.encode('utf-8').decode('ascii', 'ignore')
-        soup = BeautifulSoup(html, 'html.parser')
+		soup = BeautifulSoup(html, 'html.parser')
 
-        if len(soup.select('span.nextprev a')) > 0:
-            nxt_link = soup.select('span.nextprev a')[-1]
-            if nxt_link['rel'][1] == 'next':
-                return nxt_link['href']
-            else:
-                return None
-        else:
-            return None
+		if len(soup.select('span.nextprev a')) > 0:
+			nxt_link = soup.select('span.nextprev a')[-1]
+			if nxt_link['rel'][1] == 'next':
+				return nxt_link['href']
+			else:
+				return None
+		else:
+			return None
 
-    @staticmethod
-    def parse_course_html(html):
-        # !!!Can use a helper function to save the soup
-        soup = BeautifulSoup(html, 'html.parser')
-        if soup.select('div.expando div.md') == []:
-            return
-        post_content = soup.select('div.expando div.md')[0].get_text()
-        if len(str(post_content).split()) > 70:
-            return
-        if soup.select('p.title a.title.may-blank') == []:
-            return
-        question = soup.select('p.title a.title.may-blank')[0].get_text()
+	@staticmethod
+	def parse_course_html(html):
+		# !!!Can use a helper function to save the soup
+		soup = BeautifulSoup(html, 'html.parser')
+		if soup.select('div.expando div.md') == []:
+			return
+		post_content = soup.select('div.expando div.md')[0].get_text()
+		if len(str(post_content).split()) > 70:
+			return
+		if soup.select('p.title a.title.may-blank') == []:
+			return
+		question = soup.select('p.title a.title.may-blank')[0].get_text()
 
-        if soup.select('div.commentarea div.md') == []:
-            return
-        top = soup.select('div.commentarea div.md')[0]
-        if top.select('p') == []:
-            return
-        answer = top.select('p')[0].get_text()
-        if len(answer.split()) > 30:
-            return
-        QandA = {'question': question, 'answer': answer}
-        return QandA
+		if soup.select('div.commentarea div.md') == []:
+			return
+		top = soup.select('div.commentarea div.md')[0]
+		if top.select('p') == []:
+			return
+		answer = top.select('p')[0].get_text()
+		if len(answer.split()) > 30:
+			return
+		QandA = {'question': question, 'answer': answer}
+		return QandA
 
 
 class QandAFinderWorker(Thread):
@@ -187,4 +187,3 @@ class QandAFinderWorker(Thread):
                 QandAFinderWorker.lock.release()
 
             self.queue.task_done()
-
