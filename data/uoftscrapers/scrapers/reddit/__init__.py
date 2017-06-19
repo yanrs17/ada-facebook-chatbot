@@ -33,7 +33,8 @@ class Reddit:
 		while nxt_time < time():
 			now_time = nxt_time
             # three months: 7776000
-			nxt_time = nxt_time + 7776000
+			# two months: 1728000
+			nxt_time = nxt_time + 1728000
 			url = 'https://www.reddit.com/r/UofT/search?rank=title&q=timestamp:' + str(now_time) + '..' + str(nxt_time) + '&restrict_sr=on&syntax=cloudsearch'
 			urls.append(url)
 		return urls

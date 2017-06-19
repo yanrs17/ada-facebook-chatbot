@@ -21,8 +21,8 @@ print("Average length of a question is " + str(avg_len_question))
 avg_len_answer = count_A_words // count_len
 print("Average length of an answer is " + str(avg_len_answer))
 
-# Total pair of Q and A is 6207
-# Total word count in all questions is 46895
-# Total word count in all answers is 76442
+# Total pair of Q and A is 8509
+# Total word count in all questions is 61374
+# Total word count in all answers is 103867
 # Average length of a question is 7
 # Average length of an answer is 12
