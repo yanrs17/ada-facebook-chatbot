@@ -68,9 +68,9 @@ def receivedMessage(event):
     #     sendTextMessage(senderID, "Message with attachment received")
 
     if (messageText):
-        print "go into messageText"
+        # print "go into messageText"
         responseText = respondToQuery(messageText)
-        print "get responseText"
+        # print "get responseText"
         sendTextMessage(senderID, responseText)
     elif (messageAttachments):
         sendTextMessage(senderID, "Message with attachment received")
@@ -93,7 +93,7 @@ def matchQuery(token):
     elif (token.upper() == 'BOOK' or token.upper() == 'BOOKS'):
         return "Please enter the book you are looking for.<br/>"
     else:
-        return None
+        return "not implemented"
 
 def respondToQuery(messageText):
     ''' Generate response to a general query. If token is a non-chatting request, call helper functions
@@ -111,9 +111,9 @@ def respondToQuery(messageText):
     # rest = tokens[1:]
 
     if len(tokens) == 1: # If there is only one token
-        response = matchQuery(first)
-        if response != None:
-            return response 
+        return matchQuery(first)
+        # if response != None:
+        #     return response 
     elif len(tokens) >= 2:  # If there is one token + argument 
         if first.upper() == 'WHERE' or first.upper() == "LOC" or first.upper() == "LOCATION" or first == "找":
             return getLocation(tokens[1])
@@ -123,12 +123,12 @@ def respondToQuery(messageText):
             return getOpentime(tokens[1])
         elif first.upper() == 'BOOK' or first.upper() == 'BOOKS':
             return getBook(tokens[1:])     
-    else:
-        return ChatbotManager.callBot(messageText)  
+        else:
+            return "not implemented yet" # ChatbotManager.callBot(messageText)  
 
 def sendTextMessage(recipientId, messageText):
     print "Send to user" + str(recipientId)
-    response_msg = json.dumps({"recipient":{"id":recipientId}, "message":{"text":"hahah"}})
+    response_msg = json.dumps({"recipient":{"id":recipientId}, "message":{"text":messageText}})
     callSendAPI(response_msg)
 
 def callSendAPI(messageData):
@@ -140,9 +140,9 @@ def callSendAPI(messageData):
 
 
 if __name__ == '__main__':
-    # initialize chatbot (only once per server session)
-    print "initialize chatbot "
-    ChatbotManager()
-    print "after bot initialization"
+    # # initialize chatbot (only once per server session)
+    # print "initialize chatbot "
+    # ChatbotManager()
+    # print "after bot initialization"
     app.debug = True
     app.run()
