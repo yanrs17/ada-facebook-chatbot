@@ -135,7 +135,7 @@ def receivedMessage(event):
 
     if (messageText):
         if messageText == 'generic':
-            sendGenericMessage(senderID)
+            sendTextMessage(senderID, messageText+" lol")
         else:
             sendTextMessage(senderID, messageText)
     elif (messageAttachments):
