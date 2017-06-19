@@ -87,7 +87,8 @@ def getSuggestedLibraries():
 
 @app.route('/')
 def getHomePage():
-    print "hi home"
+    # print "hi home"
+    print("hi home")
     return "Welcome to the homepage!"
 
 # @app.route('/webhook', methods=['GET'])
@@ -110,7 +111,8 @@ def receive_message():
                 if ('message' in event and event['message']):
                     receivedMessage(event)
                 else:
-                    print "Webhook received unknown event"
+                    # print "Webhook received unknown event"
+                    print("Webhook received unknown event")
     return "OK", 200
 
 def receivedMessage(event):
@@ -119,9 +121,13 @@ def receivedMessage(event):
     timeOfMessage = int(event['timestamp'])
     message = event['message']
 
-    print "Received message for user %d and page %d at %d with message:" \
-        % (senderID, recipientID, timeOfMessage)
-    print str(message)
+    # print "Received message for user %d and page %d at %d with message:" \
+    #     % (senderID, recipientID, timeOfMessage)
+    # print str(message)
+     
+    print("Received message for user %d and page %d at %d with message:" \
+        % (senderID, recipientID, timeOfMessage))
+    print(str(message))
 
     messageId = message.get('mid')
     messageText = message.get('text')
@@ -129,14 +135,15 @@ def receivedMessage(event):
 
     if (messageText):
         if messageText == 'generic':
-            sendGenericMessage(senderID)
+            sendTextMessage(senderID, messageText+" lol")
         else:
             sendTextMessage(senderID, messageText)
     elif (messageAttachments):
         sendTextMessage(senderID, "Message with attachment received")
 
 def sendTextMessage(recipientId, messageText):
-    print "Send to user" + str(recipientId)
+    # print "Send to user" + str(recipientId)
+    print("Send to user" + str(recipientId))
     response_msg = json.dumps({"recipient":{"id":recipientId}, "message":{"text":messageText}})
     callSendAPI(response_msg)
 
