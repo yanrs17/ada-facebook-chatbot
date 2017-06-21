@@ -83,7 +83,7 @@ DICT_OF_LIBRARIES = {
 };
 
 def getSuggestedLibraries():
-    return '\n'.join(LIST_OF_LIBRARIES)
+    return '\n'.join(LIST_OF_LIBRARIES[:5])
 
 @app.route('/')
 def getHomePage():
@@ -193,7 +193,7 @@ def matchQuery(token):
         a query response for valid tokens or None   
     '''
     if (token.upper() == 'LIB' or token.upper() == 'LIBRARY'):
-        return "Please enter the library you are looking for.(ie. lib rb)<br/>" + getSuggestedLibraries()
+        return "Please enter the library you are looking for.(ie. lib rb)" + getSuggestedLibraries()
     elif token.upper() == 'TIMETABLE':
         return "What course do you want to find?"
     elif (token.upper() == 'WHERE' or token.upper() == "LOC" or token.upper() == "LOCATION"):
