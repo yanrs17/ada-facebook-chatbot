@@ -262,8 +262,8 @@ def callSendAPI(messageData):
 #     return "cannot find book"
 
 if __name__ == '__main__':
-    print("ready to initialize")
+    # print("ready to initialize")
     # ChatbotManager()
-    print("lol")
+    # print("lol")
     app.debug = True
     app.run()
