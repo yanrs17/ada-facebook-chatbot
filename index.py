@@ -184,7 +184,7 @@ def respondToQuery(messageText):
         elif first.upper() == 'BOOK' or first.upper() == 'BOOKS':
             return getBook(tokens[1:])     
         else:
-            return ChatbotManager.callBot(messageText)  
+            return "hi" #ChatbotManager.callBot(messageText)  
 
 def matchQuery(token):
     ''' Generate response for a query with one token.
@@ -261,8 +261,8 @@ def callSendAPI(messageData):
 #     return "cannot find book"
 
 if __name__ == '__main__':
-    print("ready to initialize")
-    ChatbotManager()
-    print("lol")
+    # print("ready to initialize")
+    # ChatbotManager()
+    # print("lol")
     app.debug = True
     app.run()
