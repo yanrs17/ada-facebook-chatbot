@@ -9,6 +9,7 @@ from timetable import getCourseTimetable
 from book import getBook 
 
 # from chatbot.chatbotmanager import ChatbotManager 
+from chatbotmanager import ChatbotManager 
 
 import datetime
 import requests
@@ -261,8 +262,8 @@ def callSendAPI(messageData):
 #     return "cannot find book"
 
 if __name__ == '__main__':
-    # print("ready to initialize")
-    # ChatbotManager()
-    # print("lol")
+    print("ready to initialize")
+    ChatbotManager()
+    print("lol")
     app.debug = True
     app.run()
