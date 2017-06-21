@@ -9,7 +9,7 @@ from timetable import getCourseTimetable
 from book import getBook 
 
 # from chatbot.chatbotmanager import ChatbotManager 
-from chatbotmanager import ChatbotManager 
+# from chatbotmanager import ChatbotManager 
 
 import datetime
 import requests
@@ -263,7 +263,7 @@ def callSendAPI(messageData):
 
 if __name__ == '__main__':
     print("ready to initialize")
-    ChatbotManager()
+    # ChatbotManager()
     print("lol")
     app.debug = True
     app.run()
