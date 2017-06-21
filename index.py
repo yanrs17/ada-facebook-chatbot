@@ -83,7 +83,7 @@ DICT_OF_LIBRARIES = {
 };
 
 def getSuggestedLibraries():
-    return '<br/>'.join(LIST_OF_LIBRARIES)
+    return '\n'.join(LIST_OF_LIBRARIES)
 
 @app.route('/')
 def getHomePage():
@@ -133,13 +133,77 @@ def receivedMessage(event):
     messageText = message.get('text')
     messageAttachments = message.get('attachments')
 
+    # if (messageText):
+    #     if messageText == 'generic':
+    #         sendTextMessage(senderID, messageText+" lol")
+    #     else:
+    #         sendTextMessage(senderID, messageText)
+    # elif (messageAttachments):
+    #     sendTextMessage(senderID, "Message with attachment received")
+
     if (messageText):
-        if messageText == 'generic':
-            sendTextMessage(senderID, messageText+" lol")
-        else:
-            sendTextMessage(senderID, messageText)
+        # print "go into messageText"
+        responseText = respondToQuery(messageText)
+        # print "get responseText"
+        sendTextMessage(senderID, responseText)
     elif (messageAttachments):
         sendTextMessage(senderID, "Message with attachment received")
+
+
+########################################################################
+
+def respondToQuery(messageText):
+    ''' Generate response to a general query. If token is a non-chatting request, call helper functions
+        to process the request, otherwise render to the chatbot to start chatting.
+
+    Arguments:
+        messageText: the query message
+
+    Outputs:
+        a response string 
+    '''
+    tokens = messageText.split(' ')
+    first = tokens[0]
+    # TODO SUPPORT MULTIPLE
+    # rest = tokens[1:]
+
+    if len(tokens) == 1: # If there is only one token
+        return matchQuery(first)
+        # if response != None:
+        #     return response 
+    else:  # If there is one token + argument 
+        if first.upper() == 'WHERE' or first.upper() == "LOC" or first.upper() == "LOCATION":
+            return getLocation(tokens[1])
+        elif first.upper() == 'TIMETABLE':
+            return getCourseTimetable(tokens[1:])
+        elif first.upper() == 'LIB' or first.upper() == "LIBRARY":
+            return getOpentime(tokens[1])
+        elif first.upper() == 'BOOK' or first.upper() == 'BOOKS':
+            return getBook(tokens[1:])     
+        else:
+            return "not implemented yet" # ChatbotManager.callBot(messageText)  
+
+def matchQuery(token):
+    ''' Generate response for a query with one token.
+
+    Arguments:
+        token: the query token 
+
+    Outputs:
+        a query response for valid tokens or None   
+    '''
+    if (token.upper() == 'LIB' or token.upper() == 'LIBRARY'):
+        return "Please enter the library you are looking for.(ie. lib rb)<br/>" + getSuggestedLibraries()
+    elif token.upper() == 'TIMETABLE':
+        return "What course do you want to find?"
+    elif (token.upper() == 'WHERE' or token.upper() == "LOC" or token.upper() == "LOCATION"):
+        return "Which building do you want to find?"
+    elif (token.upper() == 'BOOK' or token.upper() == 'BOOKS'):
+        return "Please enter the book you are looking for."
+    else:
+        return "not implemented"
+
+############################################################################
 
 def sendTextMessage(recipientId, messageText):
     # print "Send to user" + str(recipientId)
