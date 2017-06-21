@@ -182,7 +182,7 @@ def respondToQuery(messageText):
         elif first.upper() == 'LIB' or first.upper() == "LIBRARY":
             return getOpentime(tokens[1])
         elif first.upper() == 'BOOK' or first.upper() == 'BOOKS':
-            return getBook(tokens[1:])     
+            return "nah" #getBook(tokens[1:])     
         else:
             return "not implemented yet" # ChatbotManager.callBot(messageText)  
 
