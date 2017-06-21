@@ -6,6 +6,9 @@ app = Flask(__name__)
 from where import getLocation
 from opentime import getOpentime
 from timetable import getCourseTimetable
+from book import getBook 
+
+from chatbot.chatbotmanager import ChatbotManager 
 
 import datetime
 import requests
@@ -181,7 +184,7 @@ def respondToQuery(messageText):
         elif first.upper() == 'BOOK' or first.upper() == 'BOOKS':
             return getBook(tokens[1:])     
         else:
-            return "not implemented yet" # ChatbotManager.callBot(messageText)  
+            return ChatbotManager.callBot(messageText)  
 
 def matchQuery(token):
     ''' Generate response for a query with one token.
@@ -258,5 +261,6 @@ def callSendAPI(messageData):
 #     return "cannot find book"
 
 if __name__ == '__main__':
+    ChatbotManager()
     app.debug = True
     app.run()
