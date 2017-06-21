@@ -10,13 +10,17 @@ from chatbot.chatbot import Chatbot
 logger = logging.getLogger(__name__)
 
 
-class ChatbotManager(AppConfig):
+# class ChatbotManager(AppConfig):
+class ChatbotManager(object):
     """ Manage a single instance of the chatbot shared over the website
     """
     name = 'chatbot_interface'
     verbose_name = 'Chatbot Interface'
 
     bot = None
+
+    def __init__(self):
+        ChatbotManager.initBot()
 
     def ready(self):
         """ Called by Django only once during startup
@@ -35,7 +39,7 @@ class ChatbotManager(AppConfig):
             logger.info('Initializing bot...')
             ChatbotManager.bot = Chatbot()  #chatbot.Chatbot()
             # need to find the chatbotPath for model and data 
-            ChatbotManager.bot.main(['--modelTag', 'server']) #, '--test', 'daemon', '--rootDir', chatbotPath])
+            ChatbotManager.bot.main(['--modelTag', 'server', '--test', 'daemon', '--rootDir', ''])
         else:
             logger.info('Bot already initialized.')
 
