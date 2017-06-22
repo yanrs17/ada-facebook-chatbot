@@ -106,7 +106,7 @@ def getHomePage():
 
 
 
-ChatbotManager()
+# ChatbotManager()
 
 
 @app.route('/webhook', methods=['POST'])
@@ -150,13 +150,18 @@ def receivedMessage(event):
     #         sendTextMessage(senderID, messageText)
     # elif (messageAttachments):
     #     sendTextMessage(senderID, "Message with attachment received")
-
+    import traceback
     if (messageText):
         # print "go into messageText"
         responseText = respondToQuery(messageText)
         # print "get responseText"
-        print(responseText)
-        # sendTextMessage(senderID, responseText)
+        try:
+            sendTextMessage(senderID, responseText)
+            tb = "No error"
+        catch Exception:
+            tb = traceback.format_exc()
+        finally:
+            print(tb)
     elif (messageAttachments):
         sendTextMessage(senderID, "Message with attachment received")
 
@@ -192,7 +197,7 @@ def respondToQuery(messageText):
         elif first.upper() == 'BOOK' or first.upper() == 'BOOKS':
             return getBook(tokens[1:])     
         else:
-            return ChatbotManager.callBot(messageText)
+            return "hi" #ChatbotManager.callBot(messageText)
 
 def matchQuery(token):
     ''' Generate response for a query with one token.
