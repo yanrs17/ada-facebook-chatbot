@@ -73,8 +73,8 @@ LIST_OF_LIBRARIES = [
 def getOpentime(second):
     if second == "ba":
         #return "24/7/365, 程序员不用休息哒（¯﹃¯）<br/>"
-        #return "Everyday!!! Computer scientist do not need a break~<br/>"
-        return 'pass'
+        return "Everyday!!! Computer scientist do not need a break~<br/>"
+        #return 'pass'
 
     # If the library entered is not in the DICT, then ask the user to enter library again
     if second not in DICT_OF_LIBRARIES:
