@@ -158,7 +158,7 @@ def receivedMessage(event):
         try:
             sendTextMessage(senderID, responseText)
             tb = "No error"
-        catch Exception:
+        except:
             tb = traceback.format_exc()
         finally:
             print(tb)
