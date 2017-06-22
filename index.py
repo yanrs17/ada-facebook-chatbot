@@ -8,7 +8,7 @@ from opentime import getOpentime
 from timetable import getCourseTimetable
 from book import getBook 
 
-# from chatbot.chatbotmanager import ChatbotManager 
+from chatbot.chatbotmanager import ChatbotManager 
 # from chatbotmanager import ChatbotManager 
 
 import datetime
@@ -104,9 +104,15 @@ def getHomePage():
 #     print("Failed validation. Make sure the validation tokens match.")
 #     return 403
 
+
+
+ChatbotManager()
+
+
 @app.route('/webhook', methods=['POST'])
 def receive_message():
-    data = json.loads(request.data.encode('utf-8'))
+    data = json.loads(request.data.decode('utf-8'))
+    print(data['entry'])
     if (data['object'] == 'page'):
         for entry in data['entry']:
             pageID = entry['id']        
@@ -149,6 +155,7 @@ def receivedMessage(event):
         # print "go into messageText"
         responseText = respondToQuery(messageText)
         # print "get responseText"
+        # print(responseText)
         sendTextMessage(senderID, responseText)
     elif (messageAttachments):
         sendTextMessage(senderID, "Message with attachment received")
@@ -181,11 +188,11 @@ def respondToQuery(messageText):
         elif first.upper() == 'TIMETABLE':
             return getCourseTimetable(tokens[1:])
         elif first.upper() == 'LIB' or first.upper() == "LIBRARY":
-            return getOpentime(tokens[1])
+            return "not implemented" #getOpentime(tokens[1])
         elif first.upper() == 'BOOK' or first.upper() == 'BOOKS':
             return getBook(tokens[1:])     
         else:
-            return "hi" #ChatbotManager.callBot(messageText)  
+            return ChatbotManager.callBot(messageText)  
 
 def matchQuery(token):
     ''' Generate response for a query with one token.

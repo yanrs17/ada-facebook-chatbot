@@ -1,0 +1,22 @@
+{
+	"object": "page",
+	"entry": [{
+		"id": 1,
+		"time": 1,
+		"messaging": [
+			{
+				"sender": {
+					"id": 1
+				},
+				"recipient": {
+					"id": 2
+				},
+				"timestamp": 123,
+				"message": {
+					"mid": 1,
+					"text": "lib kf"
+				}
+			}
+		]
+	}]
+}
