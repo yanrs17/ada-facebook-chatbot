@@ -8,7 +8,7 @@ from opentime import getOpentime
 from timetable import getCourseTimetable
 from book import getBook 
 
-from chatbot.chatbotmanager import ChatbotManager 
+# from chatbot.chatbotmanager import ChatbotManager 
 # from chatbotmanager import ChatbotManager 
 
 import datetime
